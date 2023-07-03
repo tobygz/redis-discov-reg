@@ -9,13 +9,14 @@ import (
 	"time"
 )
 
-const prefix_addr = "sandbox_discov__"
+const prefix_addr = "sb_discov__"
 
 func monitor(rdb *redis.Client, chWait chan int, myname string) {
 	//config set notify-keyspace-events KE
 	rdb.ConfigSet(context.Background(), "notify-keyspace-events", "KE$sxem")
 
-	psub := rdb.PSubscribe(context.Background(), "__keyspace@0__:sandbox_discov__*")
+	subval := fmt.Sprintf("__keyspace@0__:%s*", prefix_addr)
+	psub := rdb.PSubscribe(context.Background(), subval)
 	go func() {
 		for {
 			select {
